@@ -1,7 +1,10 @@
 from sys import prefix
 from urllib import response
 from wsgiref import validate
+
+
 from starlette.responses import RedirectResponse
+
 from fastapi import FastAPI, Depends, HTTPException, status, APIRouter, Request, Response, Form
 from pydantic import BaseModel
 from typing import Optional
@@ -157,6 +160,7 @@ async def register_user(request: Request,
     validation1 = db.query(models.Users).filter(models.Users.username == username).first()
     validation2 = db.query(models.Users).filter(models.Users.email == email).first()
 
+    print("Validation1", validation1)
     if password != password2 or validation1 is not None or validation2 is not None:
         msg = "Invalid Registration Request"
         return templates.TemplateResponse("register.html", {"request": request, "msg": msg})
