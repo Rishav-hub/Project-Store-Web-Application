@@ -24,6 +24,6 @@ class Application(Base):
     description = Column(String)
     github_url = Column(Integer)
     technology = Column(String)
-    owner_id = Column(Integer, ForeignKey("users.id"))
+    owner_username = Column(String, ForeignKey("users.username"))
 
     owner = relationship("Users", back_populates="todos")

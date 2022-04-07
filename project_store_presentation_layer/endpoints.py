@@ -12,9 +12,9 @@ models.Base.metadata.create_all(bind=engine)
 # @app.get("/")
 # async def root():
 #     return {"Database": "Created"}
-print("Hello")
+
 app.mount("/static", StaticFiles(directory="project_store_presentation_layer/static"), name="static")
-print("Static")
+
 @app.get("/")
 async def root():
     print('here')

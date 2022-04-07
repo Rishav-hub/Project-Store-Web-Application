@@ -64,7 +64,6 @@ def authenticate_user(username: str, password: str, db):
     user = db.query(models.Users)\
         .filter(models.Users.username == username)\
         .first()
-
     if not user:
         return False
     if not verify_password(password, user.hashed_password):
@@ -92,6 +91,7 @@ async def get_current_user(request: Request):
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get("sub")
         user_id: int = payload.get("id")
+        
         if username is None or user_id is None:
             return logout(request)
         return {"username": username, "id": user_id}
@@ -123,8 +123,7 @@ async def login(request: Request, db: Session = Depends(get_db)):
     try:
         form = LoginForm(request)
         await form.create_oauth_form()
-        response = RedirectResponse(url="/todos", status_code=status.HTTP_302_FOUND)
-        
+        response = RedirectResponse(url="/application", status_code=status.HTTP_302_FOUND)
         validate_user_cookie = await login_for_access_token(response= response, form_data=form, db=db)
 
         if not validate_user_cookie:
@@ -161,6 +160,7 @@ async def register_user(request: Request,
     validation1 = db.query(models.Users).filter(models.Users.username == username).first()
     validation2 = db.query(models.Users).filter(models.Users.email == email).first()
 
+    print("Validation1", validation1)
     if password != password2 or validation1 is not None or validation2 is not None:
         msg = "Invalid Registration Request"
         return templates.TemplateResponse("register.html", {"request": request, "msg": msg})
@@ -172,8 +172,8 @@ async def register_user(request: Request,
     user_model.last_name = lastname
     user_model.hashed_password = get_password_hash(password)
     user_model.is_active = True
+    print("Registration Successful")
 
-    print(user_model)
     db.add(user_model)
     db.commit()
 
