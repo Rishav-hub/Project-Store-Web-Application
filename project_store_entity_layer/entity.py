@@ -15,7 +15,6 @@ class Users(Base):
 
     todos = relationship("Application", back_populates="owner")
 
-
 class Application(Base):
     __tablename__ = "application"
 
