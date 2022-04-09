@@ -68,7 +68,9 @@ async def create_app(request: Request, title: str = Form(...),description: str =
         todo_model.description = description
         todo_model.github_url = github_url
         todo_model.technology = technology
-        todo_model.owner_username = user.get("username")
+        # todo_model.owner_username = user.get("username")
+        todo_model.owner_id = user.get("id")
+
 
         db.add(todo_model)
         db.commit()

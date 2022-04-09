@@ -11,4 +11,4 @@ starlette
 PyYAML
 pymysql
 MySQL-python
-MySQL-python-connector
+python-dotenv
