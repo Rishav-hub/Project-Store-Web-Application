@@ -3,6 +3,9 @@ from passlib.context import CryptContext
 from typing import Optional
 from datetime import datetime, timedelta
 from jose import jwt, JWTError
+from dotenv import dotenv_values
+
+
 # from fastapi import FastAPI, Depends, HTTPException, status, APIRouter, Request, Response, Form
 
 from project_store_entity_layer import entity as models
@@ -74,13 +77,19 @@ class BusinessLogic:
     def create_access_token(self, username: str, user_id: int,
                             expires_delta: Optional[timedelta] = None):
         try:
+            enironment_variable= dotenv_values('.env')
+            secrete_key = enironment_variable['SECRET_KEY']
+            algorithm = enironment_variable['ALGORITHM']
+
             encode = {"sub": username, "id": user_id}
             if expires_delta:
                 expire = datetime.utcnow() + expires_delta
             else:
                 expire = datetime.utcnow() + timedelta(minutes=15)
             encode.update({"exp": expire})
-            return jwt.encode(encode, Configuration().SECRET_KEY, algorithm=Configuration().ALGORITHM)
+            # return jwt.encode(encode, Configuration().SECRET_KEY, algorithm=Configuration().ALGORITHM)
+            return jwt.encode(encode,secrete_key, algorithm=algorithm)
+
         except Exception as e:    
             load_token_exception = BusinessLogicException(
             "Failed during loading Token in module [{0}] class [{1}] method [{2}]"

@@ -16,8 +16,8 @@ class Configuration:
             self.TEMPLATE_DIR = FRONTEND_DIR['TEMPLATE_DIR']
             self.STATIC_DIR = FRONTEND_DIR['STATIC_DIR']
 
-            self.SECRET_KEY = KEY_TOKEN['SECRET_KEY']
-            self.ALGORITHM = KEY_TOKEN['ALGORITHM']
+            # self.SECRET_KEY = KEY_TOKEN['SECRET_KEY']
+            # self.ALGORITHM = KEY_TOKEN['ALGORITHM']
 
             self.DB_NAME = DATABASE['DB_NAME']
             self.USER = DATABASE['USER']

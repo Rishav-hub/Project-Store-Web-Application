@@ -13,6 +13,7 @@ from datetime import datetime, timedelta
 from jose import jwt, JWTError
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+from dotenv import dotenv_values
 
 from project_store_entity_layer import entity as models
 from project_store_data_access_layer.data_access import engine
@@ -51,10 +52,14 @@ class LoginForm:
 
 async def get_current_user(request: Request):
     try:
+        enironment_variable= dotenv_values('.env')
+        secret_key = enironment_variable['SECRET_KEY']
+        algorithm = enironment_variable['ALGORITHM']
         token=request.cookies.get("access_token")
         if token is None:
             return None
-        payload = jwt.decode(token, Configuration().SECRET_KEY, algorithms=[Configuration().ALGORITHM])
+        # payload = jwt.decode(token, Configuration().SECRET_KEY, algorithms=[Configuration().ALGORITHM])
+        payload = jwt.decode(token, secret_key, algorithms=[algorithm])
         username: str = payload.get("sub")
         user_id: int = payload.get("id")
         
