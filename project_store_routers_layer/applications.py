@@ -104,14 +104,6 @@ async def view_app_comit(request: Request, todo_id: int, title: str = Form(...),
         if user is None:
             return RedirectResponse(url="/auth", status_code= status.HTTP_302_FOUND)
         todo = db.query(models.Application).filter(models.Application.id == todo_id).first()
-
-        todo.title = title
-        todo.description = description
-        todo.github_url = github_url
-        todo.technology = technology
-        db.add(todo)
-
-        db.commit()
         return RedirectResponse(url = '/application', status_code= status.HTTP_302_FOUND)
     except Exception as e:
         view_app_comit_exception = ApplicationException(

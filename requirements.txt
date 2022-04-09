@@ -9,3 +9,6 @@ Jinja2
 bcrypt
 starlette
 PyYAML
+pymysql
+MySQL-python
+MySQL-python-connector
