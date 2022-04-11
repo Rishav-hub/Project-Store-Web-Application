@@ -8,8 +8,9 @@ KEY_TOKEN:
 
 DATABASE:
   DB_NAME: mysql+pymysql
-  HOST: 127.0.0.1
+  # HOST: 127.0.0.1
   USER: root
   PORT: 3306
   PASSWORD: gAAAAABiUbDzjIVszVDITh7zPhlglJmnX7-J_PCSeIehsPMQ5_EhHaQP_6w3VNsHtG7gUYWTpHqKg9BXvwj9Tq5MMn14Y277mA==
   DATABASE: projectstore
+  HOST: "sqlite:///./user.db"

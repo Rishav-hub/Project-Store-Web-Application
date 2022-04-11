@@ -1,7 +1,7 @@
 import sys
 from urllib import response
 from wsgiref import validate
-
+import uuid
 from starlette.responses import RedirectResponse
 from fastapi import FastAPI, Depends, HTTPException, status, APIRouter, Request, Response, Form
 from pydantic import BaseModel
@@ -24,7 +24,7 @@ from project_store_data_access_layer.data_access import engine
 from project_store_business_logic_layer.business_logic import BusinessLogic
 from project_store_config_layer.configuration import Configuration
 from project_store_exception_layer.exception import CustomException as AuthenticationException
-
+from project_store_logging_layer.logger.log_request import LogRequest
 
 bcrypt_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -111,14 +111,20 @@ async def authentication_page(request: Request):
 @router.post("/", response_class=HTMLResponse)
 async def login(request: Request, db: Session = Depends(business_logic.get_db)):
     try:
+        log_writer = LogRequest(execution_id=str(uuid.uuid4()))
+        log_writer.log_start(request, db)
         form = LoginForm(request)
+        # print(form.create_oauth_form())
+
         await form.create_oauth_form()
         response = RedirectResponse(url="/application", status_code=status.HTTP_302_FOUND)
         validate_user_cookie = await login_for_access_token(response= response, form_data=form, db=db)
 
         if not validate_user_cookie:
+            log_writer.log_stop(request, db)
             msg = "Incorrect Username and password"
             return templates.TemplateResponse("login.html", {"request": request, "msg": msg})
+        log_writer.log_stop(request, db)
         return response
 
     except HTTPException:

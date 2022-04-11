@@ -1,5 +1,7 @@
 import yaml
 import sys
+from datetime import datetime
+from dateutil.parser import parse
 from project_store_exception_layer.exception import CustomException as LoadYamlException
 
 class CommonUtils:
@@ -21,3 +23,39 @@ class CommonUtils:
                     .format(self.__module__, CommonUtils.__name__,
                             self.read_yaml.__name__))
             raise Exception(load_yaml_exception.error_message_detail(str(e), sys)) from e
+
+    def get_time(self):
+        """
+        :return current time:
+        """
+        return datetime.now().strftime("%H:%M:%S").__str__()
+
+    def get_date(self):
+        """
+        :return current date:
+        """
+        return datetime.now().date().__str__()
+
+
+    def get_difference_in_second(self,future_date_time:str,past_date_time:str):
+        """
+        :param future_date_time:
+        :param past_date_time:
+        :return difference in second:
+        """
+        future_date = parse(future_date_time)
+        past_date = parse(past_date_time)
+        difference = (future_date - past_date)
+        total_seconds = difference.total_seconds()
+        return total_seconds
+
+
+    def get_difference_in_milisecond(self,future_date_time:str,past_date_time:str):
+        """
+        :param future_date_time:
+        :param past_date_time:
+        :return difference in milisecond:
+        """
+        total_seconds = self.get_difference_in_second(future_date_time,past_date_time)
+        total_milisecond=total_seconds*1000
+        return total_milisecond
