@@ -43,3 +43,13 @@ class LogUser(Base):
     log_stop_time = Column(String)
     execution_time_milisecond = Column(Integer)
     request = Column(String)
+
+class LogException(Base):
+    __tablename__ = "log_exception"
+
+    id = Column(Integer, primary_key=True, index=True)
+    execution_id = Column(String)
+    log_update_date = Column(String)
+    log_update_time = Column(String)
+    message = Column(String)
+    log_writer_id = Column(String)

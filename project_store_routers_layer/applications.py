@@ -1,3 +1,4 @@
+import os
 import sys
 import uuid
 from typing import Optional
@@ -20,6 +21,7 @@ from project_store_config_layer.configuration import Configuration
 from project_store_data_access_layer.data_access import engine
 from project_store_exception_layer.exception import CustomException as ApplicationException
 from project_store_logging_layer.logger.log_request import LogRequest
+from project_store_logging_layer.logger.log_exception import LogExceptionDetail
 
 
 router = APIRouter(prefix="/application", tags=["application"], responses= {"404": {"description": "Not Found"}})
@@ -32,7 +34,8 @@ business_logic = BusinessLogic()
 @router.get("/", response_class=HTMLResponse)
 async def read_all_by_user(request: Request, db: Session = Depends(business_logic.get_db)):
     try:
-        log_writer = LogRequest(execution_id=str(uuid.uuid4()))
+        execution_id=str(uuid.uuid4())
+        log_writer = LogRequest(execution_id= execution_id)
         log_writer.log_start(request, db, True)
         user = await get_current_user(request)
         if user is None:
@@ -42,11 +45,19 @@ async def read_all_by_user(request: Request, db: Session = Depends(business_logi
         log_writer.log_stop(request, db, True)
         return templates.TemplateResponse("index.html", {"request": request, "applications": todos, "user": user})
     except Exception as e:
-        read_all_by_user_exception = ApplicationException(
-        "Failed during Reading all user in method [{0}]"
-            .format(read_all_by_user.__name__))
-        raise Exception(read_all_by_user_exception.error_message_detail(str(e), sys))\
-                from e
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        file_name = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+        exception_type = e.__repr__()
+        exception_detail = {'exception_type': exception_type,
+                    'file_name': file_name, 'line_number': exc_tb.tb_lineno,
+                    'detail': sys.exc_info().__str__()}
+
+        log_exception=LogExceptionDetail(execution_id= execution_id)
+        log_exception.log(db, str(exception_detail))
+
+        
+        log_writer.log_stop(request, db, False)
+        raise Exception(e) from e
 
 @router.get("/add-app", response_class=HTMLResponse)
 async def add_new_app(request: Request):
@@ -66,7 +77,8 @@ async def add_new_app(request: Request):
 async def create_app(request: Request, title: str = Form(...),description: str = Form(...),
                                 github_url: str = Form(...), technology: str= Form(...), db: Session = Depends(business_logic.get_db)):
     try:
-        log_writer = LogRequest(execution_id=str(uuid.uuid4()))
+        execution_id=str(uuid.uuid4())
+        log_writer = LogRequest(execution_id= execution_id)
         log_writer.log_start(request, db, True)
         user = await get_current_user(request)
         if user is None:
@@ -86,16 +98,25 @@ async def create_app(request: Request, title: str = Form(...),description: str =
         log_writer.log_stop(request, db, True)
         return RedirectResponse(url = '/application', status_code= status.HTTP_302_FOUND)
     except Exception as e:
-        create_app_exception = ApplicationException(
-        "Failed during Creating New Application in method [{0}]"
-            .format(create_app.__name__))
-        raise Exception(create_app_exception.error_message_detail(str(e), sys))\
-                from e
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        file_name = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+        exception_type = e.__repr__()
+        exception_detail = {'exception_type': exception_type,
+                    'file_name': file_name, 'line_number': exc_tb.tb_lineno,
+                    'detail': sys.exc_info().__str__()}
+
+        log_exception=LogExceptionDetail(execution_id= execution_id)
+        log_exception.log(db, str(exception_detail))
+
+        
+        log_writer.log_stop(request, db, False)
+        raise Exception(e) from e
 
 @router.get("/view-app/{todo_id}", response_class=HTMLResponse)
 async def view_app(request: Request, todo_id: int, db: Session = Depends(business_logic.get_db)):
     try:
-        log_writer = LogRequest(execution_id=str(uuid.uuid4()))
+        execution_id=str(uuid.uuid4())
+        log_writer = LogRequest(execution_id=execution_id)
         log_writer.log_start(request, db, True)
 
         users = await get_current_user(request)
@@ -106,18 +127,27 @@ async def view_app(request: Request, todo_id: int, db: Session = Depends(busines
         log_writer.log_stop(request, db, True)
         return templates.TemplateResponse("view-app.html", {"request": request, "applications": todo, "user": users})
     except Exception as e:
-        view_app_exception = ApplicationException(
-        "Failed during Getting current user in method [{0}]"
-            .format(view_app.__name__))
-        raise Exception(view_app_exception.error_message_detail(str(e), sys))\
-                from e
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        file_name = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+        exception_type = e.__repr__()
+        exception_detail = {'exception_type': exception_type,
+                    'file_name': file_name, 'line_number': exc_tb.tb_lineno,
+                    'detail': sys.exc_info().__str__()}
+
+        log_exception=LogExceptionDetail(execution_id= execution_id)
+        log_exception.log(db, str(exception_detail))
+
+        
+        log_writer.log_stop(request, db, False)
+        raise Exception(e) from e
 
 @router.post("/view-app/{todo_id}", response_class=HTMLResponse)
 async def view_app_comit(request: Request, todo_id: int, title: str = Form(...),description: str = Form(...),
                                 github_url: str = Form(...), technology: str= Form(...),\
                                 db: Session = Depends(business_logic.get_db)):
     try:
-        log_writer = LogRequest(execution_id=str(uuid.uuid4()))
+        execution_id=str(uuid.uuid4())
+        log_writer = LogRequest(execution_id= execution_id)
         log_writer.log_start(request, db, True)
         user = await get_current_user(request)
         if user is None:
@@ -128,16 +158,25 @@ async def view_app_comit(request: Request, todo_id: int, title: str = Form(...),
         log_writer.log_stop(request, db, True)
         return RedirectResponse(url = '/application', status_code= status.HTTP_302_FOUND)
     except Exception as e:
-        view_app_comit_exception = ApplicationException(
-        "Failed during View application Comit in method [{0}]"
-            .format(view_app_comit.__name__))
-        raise Exception(view_app_comit_exception.error_message_detail(str(e), sys))\
-                from e
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        file_name = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+        exception_type = e.__repr__()
+        exception_detail = {'exception_type': exception_type,
+                    'file_name': file_name, 'line_number': exc_tb.tb_lineno,
+                    'detail': sys.exc_info().__str__()}
+
+        log_exception=LogExceptionDetail(execution_id= execution_id)
+        log_exception.log(db, str(exception_detail))
+
+        
+        log_writer.log_stop(request, db, False)
+        raise Exception(e) from e
 
 @router.get("/delete/{todo_id}", response_class=HTMLResponse)
 async def delete_app(request: Request, todo_id: int, db: Session = Depends(business_logic.get_db)):
     try:
-        log_writer = LogRequest(execution_id=str(uuid.uuid4()))
+        execution_id=str(uuid.uuid4())
+        log_writer = LogRequest(execution_id=execution_id)
         log_writer.log_start(request, db, True)
 
         user = await get_current_user(request)
@@ -152,8 +191,16 @@ async def delete_app(request: Request, todo_id: int, db: Session = Depends(busin
         log_writer.log_stop(request, db, True)
         return RedirectResponse(url = '/application', status_code= status.HTTP_302_FOUND)
     except Exception as e:
-        delete_app_exception = ApplicationException(
-        "Failed during Deleting application in method [{0}]"
-            .format(delete_app.__name__))
-        raise Exception(delete_app_exception.error_message_detail(str(e), sys))\
-                from e
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        file_name = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+        exception_type = e.__repr__()
+        exception_detail = {'exception_type': exception_type,
+                    'file_name': file_name, 'line_number': exc_tb.tb_lineno,
+                    'detail': sys.exc_info().__str__()}
+
+        log_exception=LogExceptionDetail(execution_id= execution_id)
+        log_exception.log(db, str(exception_detail))
+
+        
+        log_writer.log_stop(request, db, False)
+        raise Exception(e) from e

@@ -1,3 +1,4 @@
+import os
 import sys
 from urllib import response
 from wsgiref import validate
@@ -21,6 +22,7 @@ from project_store_data_access_layer.data_access import engine
 from project_store_business_logic_layer.business_logic import BusinessLogic
 from project_store_config_layer.configuration import Configuration
 from project_store_exception_layer.exception import CustomException as AuthenticationException
+from project_store_logging_layer.logger.log_exception import LogExceptionDetail
 from project_store_logging_layer.logger.log_request import LogRequest
 
 bcrypt_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -76,8 +78,10 @@ async def get_current_user(request: Request):
 async def login_for_access_token(response: Response, form_data: OAuth2PasswordRequestForm = Depends(),
                                  db: Session = Depends(business_logic.get_db)):
     try:
+
         user = business_logic.authenticate_user(form_data.username, form_data.password, db)
         if not user:
+            # log_writer.log_stop(response, db, False)
             return False
         token_expires = timedelta(minutes=60)
         token = business_logic.create_access_token(user.username,
@@ -85,13 +89,14 @@ async def login_for_access_token(response: Response, form_data: OAuth2PasswordRe
                                     expires_delta=token_expires)
 
         response.set_cookie(key="access_token", value=token, httponly=True)
+  
         return True
     except Exception as e:
-        login_for_access_token_exception = AuthenticationException(
-        "Failed during getting access token in method [{0}]"
-            .format(login_for_access_token.__name__))
-        raise Exception(login_for_access_token_exception.error_message_detail(str(e), sys))\
-                from e  
+        load_login_for_access_token_exception = AuthenticationException(
+            "Failed during Login for access token in method [{0}]"
+                .format(login_for_access_token.__name__))
+        raise Exception(load_login_for_access_token_exception.error_message_detail(str(e), sys))\
+                 from e
 
 
 @router.get("/", response_class=HTMLResponse)
@@ -108,7 +113,8 @@ async def authentication_page(request: Request):
 @router.post("/", response_class=HTMLResponse)
 async def login(request: Request, db: Session = Depends(business_logic.get_db)):
     try:
-        log_writer = LogRequest(execution_id=str(uuid.uuid4()))
+        execution_id=str(uuid.uuid4())
+        log_writer = LogRequest(execution_id = execution_id)
         log_writer.log_start(request, db, True)
         form = LoginForm(request)
 
@@ -127,17 +133,26 @@ async def login(request: Request, db: Session = Depends(business_logic.get_db)):
         msg = "UnKnown Error"
         return templates.TemplateResponse("login.html", {"request": request, "msg": msg})
     except Exception as e:
-        login_exception = AuthenticationException(
-        "Failed during user Login in method [{0}]"
-            .format(login.__name__))
-        raise Exception(login_exception.error_message_detail(str(e), sys))\
-                from e    
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        file_name = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+        exception_type = e.__repr__()
+        exception_detail = {'exception_type': exception_type,
+                    'file_name': file_name, 'line_number': exc_tb.tb_lineno,
+                    'detail': sys.exc_info().__str__()}
+
+        log_exception=LogExceptionDetail(execution_id= execution_id)
+        log_exception.log(db, str(exception_detail))
+
+        
+        log_writer.log_stop(response, db, False)
+        raise Exception(e) from e
 
 
 @router.get("/logout")
 async def logout(request: Request,db: Session = Depends(business_logic.get_db)):
     try:
-        log_writer = LogRequest(execution_id=str(uuid.uuid4()))
+        execution_id = str(uuid.uuid4())
+        log_writer = LogRequest(execution_id= execution_id)
         log_writer.log_start(request, db, True)
         msg = "You have been logged out"
         response =  templates.TemplateResponse("login.html", {"request": request, "msg": msg})
@@ -145,11 +160,18 @@ async def logout(request: Request,db: Session = Depends(business_logic.get_db)):
         log_writer.log_stop(request, db, True)
         return response
     except Exception as e:
-        logout_exception = AuthenticationException(
-        "Failed during user Logout in method [{0}]"
-            .format(logout.__name__))
-        raise Exception(logout_exception.error_message_detail(str(e), sys))\
-                from e
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        file_name = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+        exception_type = e.__repr__()
+        exception_detail = {'exception_type': exception_type,
+                    'file_name': file_name, 'line_number': exc_tb.tb_lineno,
+                    'detail': sys.exc_info().__str__()}
+
+        log_exception=LogExceptionDetail(execution_id= execution_id)
+        log_exception.log(db, str(exception_detail))
+        
+        log_writer.log_stop(response, db, False)
+        raise Exception(e) from e
 
 @router.get("/register", response_class=HTMLResponse)
 async def authentication_page(request: Request):
@@ -172,7 +194,8 @@ async def register_user(request: Request,
                         password2: str= Form(...),
                         db: Session = Depends(business_logic.get_db)):
     try:
-        log_writer = LogRequest(execution_id=str(uuid.uuid4()))
+        execution_id=str(uuid.uuid4())
+        log_writer = LogRequest(execution_id= execution_id)
         log_writer.log_start(request, db, True)
         validation1 = db.query(models.Users).filter(models.Users.username == username).first()
         validation2 = db.query(models.Users).filter(models.Users.email == email).first()
@@ -195,8 +218,15 @@ async def register_user(request: Request,
         msg = "Registration Successful...Please Login to continue"
         return templates.TemplateResponse("login.html", {"request": request, "msg": msg})
     except Exception as e:
-        register_user_exception = AuthenticationException(
-        "Failed during Register user in method [{0}]"
-            .format(register_user.__name__))
-        raise Exception(register_user_exception.error_message_detail(str(e), sys))\
-                from e 
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        file_name = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+        exception_type = e.__repr__()
+        exception_detail = {'exception_type': exception_type,
+                    'file_name': file_name, 'line_number': exc_tb.tb_lineno,
+                    'detail': sys.exc_info().__str__()}
+
+        log_exception=LogExceptionDetail(execution_id= execution_id)
+        log_exception.log(db, str(exception_detail))
+        
+        log_writer.log_stop(response, db, False)
+        raise Exception(e) from e
