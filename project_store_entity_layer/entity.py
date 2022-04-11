@@ -24,8 +24,8 @@ class Application(Base):
     description = Column(String)
     github_url = Column(String)
     technology = Column(String)
-    owner_username = Column(Integer, ForeignKey("users.id"))
-    # owner_id = Column(Integer, ForeignKey("users.id"))
+    # owner_username = Column(Integer, ForeignKey("users.id"))
+    owner_id = Column(Integer, ForeignKey("users.id"))
 
     owner = relationship("Users", back_populates="todos")
 
@@ -35,7 +35,7 @@ class LogUser(Base):
     id = Column(Integer, primary_key=True, index=True)
     execution_id = Column(String)
     log_writer_id = Column(String)
-    executed_by = Column(String)
+    status = Column(Boolean)
     log_start_date = Column(String)
     log_start_time = Column(String)
     log_update_time = Column(String)

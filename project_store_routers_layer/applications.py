@@ -1,4 +1,5 @@
 import sys
+import uuid
 from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Request, Form
 from project_store_business_logic_layer import business_logic
@@ -18,6 +19,7 @@ from project_store_routers_layer.auth import get_current_user
 from project_store_config_layer.configuration import Configuration
 from project_store_data_access_layer.data_access import engine
 from project_store_exception_layer.exception import CustomException as ApplicationException
+from project_store_logging_layer.logger.log_request import LogRequest
 
 
 router = APIRouter(prefix="/application", tags=["application"], responses= {"404": {"description": "Not Found"}})
@@ -30,10 +32,14 @@ business_logic = BusinessLogic()
 @router.get("/", response_class=HTMLResponse)
 async def read_all_by_user(request: Request, db: Session = Depends(business_logic.get_db)):
     try:
+        log_writer = LogRequest(execution_id=str(uuid.uuid4()))
+        log_writer.log_start(request, db, True)
         user = await get_current_user(request)
         if user is None:
+            log_writer.log_stop(request, db, False)
             return RedirectResponse(url="/auth", status_code= status.HTTP_302_FOUND)
         todos = db.query(models.Application).all()
+        log_writer.log_stop(request, db, True)
         return templates.TemplateResponse("index.html", {"request": request, "applications": todos, "user": user})
     except Exception as e:
         read_all_by_user_exception = ApplicationException(
@@ -60,20 +66,24 @@ async def add_new_app(request: Request):
 async def create_app(request: Request, title: str = Form(...),description: str = Form(...),
                                 github_url: str = Form(...), technology: str= Form(...), db: Session = Depends(business_logic.get_db)):
     try:
+        log_writer = LogRequest(execution_id=str(uuid.uuid4()))
+        log_writer.log_start(request, db, True)
         user = await get_current_user(request)
         if user is None:
+            log_writer.log_stop(request, db, False)
             return RedirectResponse(url="/auth", status_code= status.HTTP_302_FOUND)
         todo_model = models.Application()
         todo_model.title = title
         todo_model.description = description
         todo_model.github_url = github_url
         todo_model.technology = technology
-        # todo_model.owner_username = user.get("username")
+        # todo_model.owner_username = user.get("id")
         todo_model.owner_id = user.get("id")
 
 
         db.add(todo_model)
         db.commit()
+        log_writer.log_stop(request, db, True)
         return RedirectResponse(url = '/application', status_code= status.HTTP_302_FOUND)
     except Exception as e:
         create_app_exception = ApplicationException(
@@ -85,10 +95,15 @@ async def create_app(request: Request, title: str = Form(...),description: str =
 @router.get("/view-app/{todo_id}", response_class=HTMLResponse)
 async def view_app(request: Request, todo_id: int, db: Session = Depends(business_logic.get_db)):
     try:
+        log_writer = LogRequest(execution_id=str(uuid.uuid4()))
+        log_writer.log_start(request, db, True)
+
         users = await get_current_user(request)
         if users is None:
+            log_writer.log_stop(request, db, False)
             return RedirectResponse(url="/auth", status_code= status.HTTP_302_FOUND)
         todo = db.query(models.Application).filter(models.Application.id == todo_id).first()
+        log_writer.log_stop(request, db, True)
         return templates.TemplateResponse("view-app.html", {"request": request, "applications": todo, "user": users})
     except Exception as e:
         view_app_exception = ApplicationException(
@@ -102,10 +117,15 @@ async def view_app_comit(request: Request, todo_id: int, title: str = Form(...),
                                 github_url: str = Form(...), technology: str= Form(...),\
                                 db: Session = Depends(business_logic.get_db)):
     try:
+        log_writer = LogRequest(execution_id=str(uuid.uuid4()))
+        log_writer.log_start(request, db, True)
         user = await get_current_user(request)
         if user is None:
+            log_writer.log_stop(request, db, False)
             return RedirectResponse(url="/auth", status_code= status.HTTP_302_FOUND)
+        
         todo = db.query(models.Application).filter(models.Application.id == todo_id).first()
+        log_writer.log_stop(request, db, True)
         return RedirectResponse(url = '/application', status_code= status.HTTP_302_FOUND)
     except Exception as e:
         view_app_comit_exception = ApplicationException(
@@ -117,15 +137,19 @@ async def view_app_comit(request: Request, todo_id: int, title: str = Form(...),
 @router.get("/delete/{todo_id}", response_class=HTMLResponse)
 async def delete_app(request: Request, todo_id: int, db: Session = Depends(business_logic.get_db)):
     try:
+        log_writer = LogRequest(execution_id=str(uuid.uuid4()))
+        log_writer.log_start(request, db, True)
+
         user = await get_current_user(request)
         if user is None:
+            log_writer.log_stop(request, db, False)
             return RedirectResponse(url="/auth", status_code= status.HTTP_302_FOUND)
         todo = db.query(models.Application).filter(models.Application.id == todo_id).first()
         if todo is None:
             return RedirectResponse(url = '/application', status_code= status.HTTP_302_FOUND)
         db.query(models.Application).filter(models.Application.id == todo_id).delete()
         db.commit()
-
+        log_writer.log_stop(request, db, True)
         return RedirectResponse(url = '/application', status_code= status.HTTP_302_FOUND)
     except Exception as e:
         delete_app_exception = ApplicationException(

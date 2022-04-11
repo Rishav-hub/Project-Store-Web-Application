@@ -42,7 +42,7 @@ class LogRequest:
             raise Exception(log_exception.error_message_detail(str(e), sys)) from e 
       
 
-    def log_start(self, request, db):
+    def log_start(self, request, db, status=True):
         try:
             self.log_writer_id=str(uuid.uuid4())
             self.now = datetime.now()
@@ -52,7 +52,7 @@ class LogRequest:
 
             log_model = models.LogUser()
             log_model.execution_id = self.execution_id
-            log_model.executed_by = "riishav"
+            log_model.status = status
             log_model.log_writer_id = self.log_writer_id
             log_model.log_start_date = self.log_start_date
             log_model.log_start_time = self.log_start_time
@@ -70,7 +70,7 @@ class LogRequest:
             raise Exception(log_exception.error_message_detail(str(e), sys)) from e
 
 
-    def log_stop(self,request, db):
+    def log_stop(self,request, db, status=True):
         try:
             self.now = datetime.now()
             self.date = self.now.date()
@@ -82,6 +82,7 @@ class LogRequest:
             past_date="{} {}".format(self.log_start_date,self.log_start_time)
 
             log_model = db.query(models.LogUser).filter(models.LogUser.execution_id == self.execution_id).one_or_none()
+            log_model.status = status
             log_model.log_stop_date = log_stop_date
             log_model.log_stop_time = log_stop_time
             log_model.log_writer_id = self.log_writer_id

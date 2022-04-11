@@ -15,11 +15,11 @@ try:
     port = db_config.PORT
     password = EncryptData().decrypt_message(bytes(db_config.PASSWORD, 'utf-8'))
     database = db_config.DATABASE
-    # SQLALCHEMY_DATABASE_URI = f"{db_name}://{user}:{password}@{host}:{port}/{database}"
-    SQLALCHEMY_DATABASE_URI = f"{host}"
+    SQLALCHEMY_DATABASE_URI = f"{db_name}://{user}:{password}@{host}:{port}/{database}"
+    # SQLALCHEMY_DATABASE_URI = f"{host}"
 
     engine = create_engine(SQLALCHEMY_DATABASE_URI,
-                        connect_args={'check_same_thread': False}
+                        # connect_args={'check_same_thread': False}
                         )
 
     SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

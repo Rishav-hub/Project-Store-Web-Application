@@ -18,9 +18,6 @@ from dotenv import dotenv_values
 from project_store_entity_layer import entity as models
 from project_store_data_access_layer.data_access import engine
 
-# from project_store_business_logic_layer.business_logic import get_db, \
-#                 get_password_hash, verify_password, authenticate_user, \
-#                 create_access_token
 from project_store_business_logic_layer.business_logic import BusinessLogic
 from project_store_config_layer.configuration import Configuration
 from project_store_exception_layer.exception import CustomException as AuthenticationException
@@ -112,19 +109,18 @@ async def authentication_page(request: Request):
 async def login(request: Request, db: Session = Depends(business_logic.get_db)):
     try:
         log_writer = LogRequest(execution_id=str(uuid.uuid4()))
-        log_writer.log_start(request, db)
+        log_writer.log_start(request, db, True)
         form = LoginForm(request)
-        # print(form.create_oauth_form())
 
         await form.create_oauth_form()
         response = RedirectResponse(url="/application", status_code=status.HTTP_302_FOUND)
         validate_user_cookie = await login_for_access_token(response= response, form_data=form, db=db)
 
         if not validate_user_cookie:
-            log_writer.log_stop(request, db)
+            log_writer.log_stop(request, db, False)
             msg = "Incorrect Username and password"
             return templates.TemplateResponse("login.html", {"request": request, "msg": msg})
-        log_writer.log_stop(request, db)
+        log_writer.log_stop(request, db, True)
         return response
 
     except HTTPException:
@@ -139,11 +135,14 @@ async def login(request: Request, db: Session = Depends(business_logic.get_db)):
 
 
 @router.get("/logout")
-async def logout(request: Request):
+async def logout(request: Request,db: Session = Depends(business_logic.get_db)):
     try:
+        log_writer = LogRequest(execution_id=str(uuid.uuid4()))
+        log_writer.log_start(request, db, True)
         msg = "You have been logged out"
         response =  templates.TemplateResponse("login.html", {"request": request, "msg": msg})
         response.delete_cookie(key="access_token")
+        log_writer.log_stop(request, db, True)
         return response
     except Exception as e:
         logout_exception = AuthenticationException(
@@ -173,6 +172,8 @@ async def register_user(request: Request,
                         password2: str= Form(...),
                         db: Session = Depends(business_logic.get_db)):
     try:
+        log_writer = LogRequest(execution_id=str(uuid.uuid4()))
+        log_writer.log_start(request, db, True)
         validation1 = db.query(models.Users).filter(models.Users.username == username).first()
         validation2 = db.query(models.Users).filter(models.Users.email == email).first()
 
@@ -190,7 +191,7 @@ async def register_user(request: Request,
 
         db.add(user_model)
         db.commit()
-
+        log_writer.log_stop(request, db, True)
         msg = "Registration Successful...Please Login to continue"
         return templates.TemplateResponse("login.html", {"request": request, "msg": msg})
     except Exception as e:
