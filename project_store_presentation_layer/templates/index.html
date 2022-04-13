@@ -33,6 +33,7 @@
                                 <li><a class="dropdown-item" href="#!">New Arrivals</a></li>
                             </ul>
                         </li> -->
+                
                     </ul>
                     <!-- <form class="d-flex">
                         <button class="btn btn-outline-dark" type="submit">
@@ -62,20 +63,26 @@
 
             </style>
         <h1 class="fw-bolder">Projects</h1>
-
+        <form class="d-flex" action="/application/search">
+            <input class="form-control me-2" id="autocomplete" name="query" type="search" placeholder="Title" aria-label="Search">
+            <input class="form-control me-2" id="autocomplete" name="query1" type="search" placeholder="Technology" aria-label="Search">
+            <button class="btn btn-outline-dark mt-auto" type="submit">Search</button>
+        </form>
 
         <!-- Section-->
         <section class="py-5">
-           
+            
             <div class="container px-4 px-lg-5 mt-5">
                 <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-3 justify-content-center">
-
+                    
                     {% for project in applications %}
                     <div class="col mb-5">
+                        
                         <div class="card h-100">
                             <!-- Product image-->
                             <!-- <img class="card-img-top" src="static/assets/tfod.jpg" alt="..." /> -->
                             <!-- Product details-->
+                            
                             <div class="card-body p-4">
                                 <div class="text-center">
                                     <!-- Product name-->

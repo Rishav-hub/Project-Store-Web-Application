@@ -204,3 +204,36 @@ async def delete_app(request: Request, todo_id: int, db: Session = Depends(busin
         
         log_writer.log_stop(request, db, False)
         raise Exception(e) from e
+
+@router.get("/search")
+async def search_jobs(request: Request, query: Optional[str],query1: Optional[str], db: Session = Depends(business_logic.get_db)):
+    try:
+        execution_id=str(uuid.uuid4())
+        log_writer = LogRequest(execution_id=execution_id)
+        log_writer.log_start(request, db, True)
+
+        user = await get_current_user(request)
+        if user is None:
+            log_writer.log_stop(request, db, False)
+            return RedirectResponse(url="/auth", status_code= status.HTTP_302_FOUND)
+        items = db.query(models.Application).filter(models.Application.title.contains(query))\
+                                .filter(models.Application.technology.contains(query1)).all()
+        log_writer.log_stop(request, db, True)
+        
+        return templates.TemplateResponse(
+            "index.html", {"request": request, "applications": items, "user": user}
+        )
+    except Exception as e:
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        file_name = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+        exception_type = e.__repr__()
+        exception_detail = {'exception_type': exception_type,
+                    'file_name': file_name, 'line_number': exc_tb.tb_lineno,
+                    'detail': sys.exc_info().__str__()}
+
+        log_exception=LogExceptionDetail(execution_id= execution_id)
+        log_exception.log(db, str(exception_detail))
+
+        
+        log_writer.log_stop(request, db, False)
+        raise Exception(e) from e
