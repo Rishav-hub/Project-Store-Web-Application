@@ -45,8 +45,8 @@ class EncryptData:
         """
         try:
             # key = os.environ.get('DB_KEY')
-            enironment_variable= dotenv_values('.env')
-            key = enironment_variable['DATABASE_KEY']
+            environment_variable= dotenv_values('.env')
+            key = environment_variable['DATABASE_KEY']
             return key
         except Exception as e:
             load_key_encryption = EncyptException(
