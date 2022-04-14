@@ -61,10 +61,10 @@ docker start container_ID
 
 Login page
 
-![Login](project_store_presentation_layer\img\Login.JPG)
+![Login](project_store_presentation_layer/img/Login.JPG)
 
 Register Page
-![Register](project_store_presentation_layer\img\register.JPG)
+![Register](project_store_presentation_layer/img/register.JPG)
 
 
 
