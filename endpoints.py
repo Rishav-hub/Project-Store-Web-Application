@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from starlette.responses import RedirectResponse
 from starlette import status
 from starlette.staticfiles import StaticFiles
+import uvicorn
 
 from project_store_data_access_layer.data_access import engine
 from project_store_entity_layer import entity as models
@@ -20,4 +21,7 @@ async def root():
     return RedirectResponse("/application", status_code=status.HTTP_302_FOUND)
 app.include_router(auth.router)
 app.include_router(applications.router)
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="127.0.0.1", port=8080)
 
