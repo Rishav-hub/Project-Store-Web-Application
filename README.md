@@ -12,10 +12,6 @@ Make sure you have the following prerequisites installed:
 - MySQL [Windows](https://dev.mysql.com/downloads/windows/installer/8.0.html)
 
 
-```
-Give examples
-```
-
 ### Installing
 
 #### 1. Environment setup.
@@ -28,7 +24,7 @@ conda activate ./env
 ```commandline
 pip install -r requirements.txt
 ```
-#### 4. Execute this file to generate key for Database
+#### 3. Execute this file to generate key for Database
 
 ```commandline
 python generateKey.py 
@@ -38,6 +34,11 @@ secret key and save it into your environment variable as DATABASE_KEY and run th
 
 - Also add the SECRET_KEY and ALGORITHM to be used to your environment variables
 
+#### Run Application
+windows
+```commandline
+python app.py 
+```
 ## Docker  Integration 
 
 1. Build Image 
@@ -60,11 +61,20 @@ docker start container_ID
 ## Interface
 
 Login page
-
-![Login](project_store_presentation_layer/img/Login.JPG)
+![Login](https://user-images.githubusercontent.com/57321948/163331626-d6c9b97b-f3ee-4780-a43a-2acedadde2c6.JPG)
 
 Register Page
 ![Register](project_store_presentation_layer/img/register.JPG)
+
+Home Page
+![home1](https://user-images.githubusercontent.com/57321948/163331708-89a54491-6c7e-426a-8d62-2b446b3f1603.JPG)
+![home2](https://user-images.githubusercontent.com/57321948/163331716-b8ec4d6b-2862-4df5-b0c6-50a9c929d796.JPG)
+
+View App Page
+![view_app](https://user-images.githubusercontent.com/57321948/163331760-3a17d529-94d8-4497-8cf4-4b71378140e5.JPG)
+
+Add App Page
+![add_app](https://user-images.githubusercontent.com/57321948/163331787-fa64e0bf-d26b-4131-8536-bc1b35f1cca8.JPG)
 
 
 
@@ -77,27 +87,13 @@ Add additional notes about how to deploy this on a live system
 * [FastAPI](https://fastapi.tiangolo.com/) - The web framework used
 * [MySQL](https://dev.mysql.com/downloads/windows/) - Database
 
-## Contributing
-
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
-
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
-
 ## Authors
 
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
+* **iNeuron Private Limited** - *Initial work* - [iNeuron-Pvt-Ltd](https://github.com/iNeuron-Pvt-Ltd)
 
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
 
-## Acknowledgments
-
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
 
