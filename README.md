@@ -24,7 +24,12 @@ conda activate ./env
 ```commandline
 pip install -r requirements.txt
 ```
-#### 3. Execute this file to generate key for Database
+
+#### 3. Run the setup
+```commandline
+pip install -e .
+```
+#### 4. Execute this file to generate key for Database
 
 ```commandline
 python generateKey.py 
@@ -34,7 +39,7 @@ secret key and save it into your environment variable as DATABASE_KEY and run th
 
 - Also add the SECRET_KEY and ALGORITHM to be used to your environment variables
 
-#### Run Application
+#### 5. Run Application
 windows
 ```commandline
 python app.py 
