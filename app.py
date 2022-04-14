@@ -22,6 +22,6 @@ async def root():
 app.include_router(auth.router)
 app.include_router(applications.router)
 
-if __name__ == "__main__":
-    uvicorn.run(app)
+# if __name__ == "__main__":
+#     uvicorn.run(app)
 
