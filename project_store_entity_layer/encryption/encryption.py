@@ -27,7 +27,6 @@ class EncryptData:
         """
         try:
             key = Fernet.generate_key()
-            print(key)
             with open("secret.key", "wb") as key_file:
                 key_file.write(key)
             return key
@@ -103,14 +102,13 @@ class EncryptData:
 
 
     
-    def generate_your_encrypted_email_password(self):
+    def generate_your_encrypted_database_password(self):
         """
         Generates a password for email and encrypt it
         """
         try:
-            password = input("Enter your email password: ")
+            password = input("Enter your database password: ")
             key = self.load_key()
-            print("Key:", key)
             encrypted_password = self.encrypt_message(password,key)
 
             self.configs['DATABASE']['PASSWORD'] = encrypted_password

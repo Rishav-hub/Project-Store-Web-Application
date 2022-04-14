@@ -2,9 +2,9 @@ FRONTEND_DIR:
   TEMPLATE_DIR: project_store_presentation_layer/templates
   STATIC_DIR: project_store_presentation_layer/static
 
-KEY_TOKEN:
-  SECRET_KEY: KlgH6AzYDeZeGwD288to79I3vTHT8wp7
-  ALGORITHM: HS256
+# KEY_TOKEN:
+#   SECRET_KEY: KlgH6AzYDeZeGwD288to79I3vTHT8wp7
+#   ALGORITHM: HS256
 
 DATABASE:
   DB_NAME: mysql+pymysql

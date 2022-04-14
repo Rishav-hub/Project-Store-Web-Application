@@ -10,7 +10,7 @@ class Configuration:
             config = CommonUtils().read_yaml("config.yaml")
 
             FRONTEND_DIR = config['FRONTEND_DIR']
-            KEY_TOKEN = config['KEY_TOKEN']
+            # KEY_TOKEN = config['KEY_TOKEN']
             DATABASE = config['DATABASE']
             
             self.TEMPLATE_DIR = FRONTEND_DIR['TEMPLATE_DIR']
