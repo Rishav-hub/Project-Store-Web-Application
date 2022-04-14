@@ -42,7 +42,7 @@ secret key and save it into your environment variable as DATABASE_KEY and run th
 #### 5. Run Application
 windows
 ```commandline
-python endpoints.py 
+python app.py 
 ```
 ## Docker  Integration 
 
