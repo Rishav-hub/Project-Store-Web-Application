@@ -44,9 +44,11 @@ class EncryptData:
         Return secret key from environment variable:
         """
         try:
-            # key = os.environ.get('DB_KEY')
-            environment_variable= dotenv_values('.env')
-            key = environment_variable['DATABASE_KEY']
+            if os.environ.get('DB_KEY') is None:
+                environment_variable= dotenv_values('.env')
+                key = environment_variable['DATABASE_KEY']
+            else:
+                key = os.environ.get('DB_KEY')
             return key
         except Exception as e:
             load_key_encryption = EncyptException(

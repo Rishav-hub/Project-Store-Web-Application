@@ -1,4 +1,5 @@
 import sys
+import os
 from passlib.context import CryptContext
 from typing import Optional
 from datetime import datetime, timedelta
@@ -77,9 +78,14 @@ class BusinessLogic:
     def create_access_token(self, username: str, user_id: int,
                             expires_delta: Optional[timedelta] = None):
         try:
-            enironment_variable= dotenv_values('.env')
-            secrete_key = enironment_variable['SECRET_KEY']
-            algorithm = enironment_variable['ALGORITHM']
+            
+            if os.environ.get('SECRET_KEY') is None and os.environ.get('ALGORITHM') is None:
+                enironment_variable= dotenv_values('.env')
+                secrete_key = enironment_variable['SECRET_KEY']
+                algorithm = enironment_variable['ALGORITHM']
+            else:
+                secrete_key = os.environ.get('SECRET_KEY')
+                algorithm = os.environ.get('ALGORITHM')
 
             encode = {"sub": username, "id": user_id}
             if expires_delta:

@@ -4,6 +4,6 @@ setup(
     name="Project Store Web Application",
     version="0.0.1",
     author="Rishav Dash",
-    author_email="9930046@gmail.com",
+    author_email="riishav@ineuron.ai",
     packages=find_packages()
 )

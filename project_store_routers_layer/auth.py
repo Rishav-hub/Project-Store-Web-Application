@@ -51,9 +51,13 @@ class LoginForm:
 
 async def get_current_user(request: Request):
     try:
-        enironment_variable= dotenv_values('.env')
-        secret_key = enironment_variable['SECRET_KEY']
-        algorithm = enironment_variable['ALGORITHM']
+        if os.environ.get('SECRET_KEY') is None or os.environ.get('ALGORITHM') is None:
+            enironment_variable= dotenv_values('.env')
+            secret_key = enironment_variable['SECRET_KEY']
+            algorithm = enironment_variable['ALGORITHM']
+        else:
+            secret_key = os.environ.get('SECRET_KEY')
+            algorithm = os.environ.get('ALGORITHM')
         token=request.cookies.get("access_token")
         if token is None:
             return None
