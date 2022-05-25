@@ -108,7 +108,7 @@ pycocotools==2.0.2
 pycparser==2.20
 pydantic==1.9.0
 Pygments==2.11.2
-PyJWT==2.3.0
+PyJWT==2.4.0
 pymongo==3.11.0
 PyMySQL==1.0.2
 pyparsing==2.4.6
