@@ -4,14 +4,14 @@ from starlette import status
 from starlette.staticfiles import StaticFiles
 import uvicorn
 
-from project_store_data_access_layer.data_access import engine
+from project_store_data_access_layer.data_access import prepare_db
 from project_store_entity_layer import entity as models
 from project_store_routers_layer import auth, applications
 from project_store_config_layer.configuration import Configuration
-# from project_store_entity_layer.encryption.encryption import EncryptData
+
 app = FastAPI()
 
-
+engine, _, _ = prepare_db()
 models.Base.metadata.create_all(bind=engine)
 
 app.mount("/static", StaticFiles(directory=Configuration().STATIC_DIR), name="static")

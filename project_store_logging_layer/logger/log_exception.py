@@ -9,10 +9,10 @@ from project_store_utils_layer.utils import CommonUtils
 # from desktop_data_access_layer.mongo_db.mongo_db_atlas import MongoDBOperation
 from project_store_exception_layer.exception import CustomException as ExRequestException
 from project_store_config_layer.configuration import Configuration
-from project_store_data_access_layer.data_access import engine
+from project_store_data_access_layer.data_access import prepare_db
 from project_store_business_logic_layer.business_logic import BusinessLogic
 
-
+engine ,_,_ = prepare_db()
 class LogExceptionDetail:
     def __init__(self, execution_id=None):
         self.configs = Configuration()

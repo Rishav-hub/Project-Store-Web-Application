@@ -10,7 +10,7 @@ from dotenv import dotenv_values
 # from fastapi import FastAPI, Depends, HTTPException, status, APIRouter, Request, Response, Form
 
 from project_store_entity_layer import entity as models
-from project_store_data_access_layer.data_access import SessionLocal
+from project_store_data_access_layer.data_access import prepare_db
 from project_store_config_layer.configuration import Configuration
 from project_store_exception_layer.exception import CustomException as BusinessLogicException
 
@@ -20,6 +20,7 @@ class BusinessLogic:
 
     def get_db(self):
         try:
+            _ , SessionLocal, _ = prepare_db()
             db = SessionLocal()
             yield db
         except Exception as e:    

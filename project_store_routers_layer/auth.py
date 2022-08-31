@@ -17,7 +17,7 @@ from fastapi.templating import Jinja2Templates
 from dotenv import dotenv_values
 
 from project_store_entity_layer import entity as models
-from project_store_data_access_layer.data_access import engine
+from project_store_data_access_layer.data_access import prepare_db
 
 from project_store_business_logic_layer.business_logic import BusinessLogic
 from project_store_config_layer.configuration import Configuration
@@ -26,7 +26,7 @@ from project_store_logging_layer.logger.log_exception import LogExceptionDetail
 from project_store_logging_layer.logger.log_request import LogRequest
 
 bcrypt_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
+engine , _, _ = prepare_db()
 models.Base.metadata.create_all(bind=engine)
 
 oauth2_bearer = OAuth2PasswordBearer(tokenUrl="token")

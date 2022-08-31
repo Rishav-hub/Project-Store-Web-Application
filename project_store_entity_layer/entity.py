@@ -1,7 +1,9 @@
-from sqlalchemy import Boolean, Column, Integer, String, ForeignKey
+from sqlalchemy import Boolean, Column, Integer, String, ForeignKey, VARCHAR
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.sqltypes import DateTime
-from project_store_data_access_layer.data_access import Base
+from project_store_data_access_layer.data_access import prepare_db
+
+_, _, Base = prepare_db()
 
 class Users(Base):
     __tablename__ = "users"
@@ -10,7 +12,7 @@ class Users(Base):
     username = Column(String(45), unique=True, index=True, nullable=True)
     first_name = Column(String(45), nullable=True)
     last_name = Column(String(45), nullable=True)
-    hashed_password = Column(String(45), nullable=True)
+    hashed_password = Column(String(200), nullable=True)
     is_active = Column(Integer, default=True, nullable=True)
 
     todos = relationship("Application", back_populates="owner")

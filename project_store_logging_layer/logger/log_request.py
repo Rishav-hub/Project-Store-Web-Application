@@ -10,12 +10,7 @@ from project_store_utils_layer.utils import CommonUtils
 # from desktop_data_access_layer.mongo_db.mongo_db_atlas import MongoDBOperation
 from project_store_exception_layer.exception import CustomException as LogRequestException
 from project_store_config_layer.configuration import Configuration
-from project_store_data_access_layer.data_access import engine
 from project_store_business_logic_layer.business_logic import BusinessLogic
-
-
-# models.Base.metadata.create_all(bind=engine)
-
 
 class LogRequest:
     def __init__(self,execution_id=None):

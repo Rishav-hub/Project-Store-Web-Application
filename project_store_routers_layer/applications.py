@@ -5,7 +5,7 @@ from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Request, Form
 from project_store_business_logic_layer import business_logic
 from project_store_entity_layer import entity as models
-from project_store_data_access_layer.data_access import SessionLocal, engine
+from project_store_data_access_layer.data_access import prepare_db
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, Field
 
@@ -18,14 +18,13 @@ from fastapi.templating import Jinja2Templates
 from project_store_business_logic_layer.business_logic import BusinessLogic
 from project_store_routers_layer.auth import get_current_user
 from project_store_config_layer.configuration import Configuration
-from project_store_data_access_layer.data_access import engine
 from project_store_exception_layer.exception import CustomException as ApplicationException
 from project_store_logging_layer.logger.log_request import LogRequest
 from project_store_logging_layer.logger.log_exception import LogExceptionDetail
 
 
 router = APIRouter(prefix="/application", tags=["application"], responses= {"404": {"description": "Not Found"}})
-
+engine , _, _ = prepare_db()
 models.Base.metadata.create_all(bind=engine)
 
 templates = Jinja2Templates(directory=Configuration().TEMPLATE_DIR)

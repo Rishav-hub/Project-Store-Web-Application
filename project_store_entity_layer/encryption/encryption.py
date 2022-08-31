@@ -2,7 +2,7 @@ import sys
 import os
 from cryptography.fernet import Fernet
 import yaml
-from dotenv import dotenv_values
+from dotenv import load_dotenv
 from project_store_utils_layer.utils import CommonUtils
 from project_store_exception_layer.exception import CustomException as EncyptException
 
@@ -27,8 +27,8 @@ class EncryptData:
         """
         try:
             key = Fernet.generate_key()
-            with open("secret.key", "wb") as key_file:
-                key_file.write(key)
+            load_dotenv()
+            os.environ['DATABASE_KEY_1'] = key
             return key
         except Exception as e:
             pass_generate_key_encryption = EncyptException(
@@ -45,8 +45,11 @@ class EncryptData:
         """
         try:
             if os.environ.get('DB_KEY') is None:
-                environment_variable= dotenv_values('.env')
-                key = environment_variable['DATABASE_KEY']
+                load_dotenv()
+                # environment_variable= os.getenv('.env')
+                # print(environment_variable)
+                # key = environment_variable['DATABASE_KEY']
+                key = os.getenv('DATABASE_KEY')
             else:
                 key = os.environ.get('DB_KEY')
             return key
@@ -91,12 +94,13 @@ class EncryptData:
                 key=self.load_key()
 
             f = Fernet(key)
+            print(key, encrypted_message)
             decrypted_message = f.decrypt(encrypted_message).decode("utf-8")
             return decrypted_message
 
         except Exception as e:
             decrypt_message_encryption = EncyptException(
-                "Failed during Encrypting Message in module [{0}] class [{1}] method [{2}]"
+                "Failed during Decrypting Message in module [{0}] class [{1}] method [{2}]"
                     .format(self.__module__, EncryptData.__name__,
                             self.decrypt_message.__name__))
             raise Exception(decrypt_message_encryption.error_message_detail(str(e), sys))\
@@ -110,6 +114,9 @@ class EncryptData:
         """
         try:
             password = input("Enter your database password: ")
+            # Get password from environment variable
+            load_dotenv()
+            os.environ['DATABASE_PASSWORD'] = password
             key = self.load_key()
             encrypted_password = self.encrypt_message(password,key)
 
@@ -120,6 +127,20 @@ class EncryptData:
             
             print("Your encrypted password is saved")
         
+        except Exception as e:
+            raise Exception(e) from e
+    
+    def save_credentials_to_env(self, password):
+        """
+        Saves credentials to environment variable
+        """
+        try:
+            load_dotenv()
+            # os.environ['DATABASE_KEY'] = self.load_key()
+            os.environ['DATABASE_PASSWORD'] = password
+
+
+            print("Your credentials are saved")
         except Exception as e:
             raise Exception(e) from e
 
