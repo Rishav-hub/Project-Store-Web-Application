@@ -82,11 +82,6 @@ Add App Page
 ![add_app](https://user-images.githubusercontent.com/57321948/163331787-fa64e0bf-d26b-4131-8536-bc1b35f1cca8.JPG)
 
 
-
-## Deployment
-
-Add additional notes about how to deploy this on a live system
-
 ## Built With
 
 * [FastAPI](https://fastapi.tiangolo.com/) - The web framework used
