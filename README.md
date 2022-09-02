@@ -51,6 +51,11 @@ MYSQL_ROOT_PASSWORD="your password"
 ```commandline
 python app.py
 ```
+#### 5 Open application
+```commandline
+http://127.0.0.1:8000
+```
+
 ## Run using Docker Compose
 - Add MYSQL_ROOT_PASSWORD in the .env file
 - You can also change the "MYSQL_DATABASE".
@@ -89,27 +94,10 @@ services:
 ```commandline
 docker compose up -d
 ```
-
-
-## Docker  Integration 
-
-1. Build Image 
+#### Open application
+```commandline
+http://127.0.0.1:8080
 ```
-docker build -t Image_name .
-```
-2. Create and run container
-```
-docker run -p 8000:8080 Image_name
-```
-3. Stop running container
-```
-docker stop container_ID
-```
-4. start container 
-```
-docker start container_ID
-```
-
 ## Interface
 
 Login page
