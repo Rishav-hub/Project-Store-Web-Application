@@ -3,10 +3,10 @@ services:
   db:
     image: mysql:latest
     environment:
-      MYSQL_DATABASE: projectstore
-      MYSQL_USER: admin
-      MYSQL_PASSWORD: hellodb123
-      MYSQL_ROOT_PASSWORD: hellodb123
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      # MYSQL_USER: admin
+      # MYSQL_PASSWORD: hellodb123
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     ports:
       - 3306:3306
     expose:
@@ -23,3 +23,5 @@ services:
      - 8080:8000
     volumes:
      - D:\vol\mysql_d:/var/run/mysqld   
+    depends_on:
+      - db

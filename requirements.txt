@@ -140,7 +140,7 @@ sklearn-pandas==1.8.0
 smmap==5.0.0
 sniffio==1.2.0
 spacy==2.2.3
-SQLAlchemy==1.4.34
+SQLAlchemy==1.4.38
 sqlparse==0.4.2
 srsly==0.2.0
 starlette==0.17.1
@@ -165,4 +165,3 @@ zope.event==4.5.0
 zope.interface==5.3.0
 gunicorn
 pymysql
-mysqlclient

@@ -1,6 +1,6 @@
 DATABASE:
   DATABASE: projectstore
-  DB_NAME: mysql
+  DB_NAME: mysql+pymysql
   HOST: localhost
   PASSWORD: hellodb123
   PORT: 3306
