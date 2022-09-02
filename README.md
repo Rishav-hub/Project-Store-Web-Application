@@ -53,7 +53,7 @@ python app.py
 ```
 ## Run using Docker Compose
 - Add MYSQL_ROOT_PASSWORD in the .env file
-- You can also change the "MYSQL_DATABASE". But you have to change that in config.yaml file.
+- You can also change the "MYSQL_DATABASE".
 ```commandline
 
 version: '3'
@@ -61,7 +61,7 @@ services:
   db:
     image: mysql:latest
     environment:
-      MYSQL_DATABASE: projectstore
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
       # MYSQL_USER: admin
       # MYSQL_PASSWORD: hellodb123
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
@@ -85,8 +85,10 @@ services:
       - db
 ```
 
-
-
+#### Docker compose UP
+```commandline
+docker compose up -d
+```
 
 
 ## Docker  Integration 
