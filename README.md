@@ -29,21 +29,66 @@ pip install -r requirements.txt
 ```commandline
 pip install -e .
 ```
-#### 4. Execute this file to generate key for Database
 
+## Run Application
+
+#### 1. Pull Docker image of mysql
+Put password in "your password"
 ```commandline
-python generateKey.py 
+docker run -d -e MYSQL_ROOT_PASSWORD="your password" -p 3306:3306 mysql
 ```
-- After executing this command you will get a secret.key file, now copy the 
-secret key and save it into your environment variable as DATABASE_KEY and run this file again to encrypt
 
-- Also add the SECRET_KEY and ALGORITHM to be used to your environment variables
-
-#### 5. Run Application
-windows
+#### 2. Put the passoword in .env file
 ```commandline
-python app.py 
+DATABASE_KEY=-Bx1wYj3YO2NQind7778-Ta2NBPMalo64dNsFRjuSYY=
+SECRET_KEY=KlgH6AzYDeZeGwD288to79I3vTHT8wp7
+ALGORITHM=HS256
+MYSQL_ROOT_PASSWORD="your password"
 ```
+#### 3. Install MySQL workbench and connect with the database
+
+#### 4 Run the app.py
+```commandline
+python app.py
+```
+## Run using Docker Compose
+- Add MYSQL_ROOT_PASSWORD in the .env file
+- You can also change the "MYSQL_DATABASE". But you have to change that in config.yaml file.
+```commandline
+
+version: '3'
+services:
+  db:
+    image: mysql:latest
+    environment:
+      MYSQL_DATABASE: projectstore
+      # MYSQL_USER: admin
+      # MYSQL_PASSWORD: hellodb123
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - 3306:3306
+    expose:
+      - '3306'
+
+    volumes:
+      - D:\vol\mysql_data:/var/lib/mysql
+      - D:\vol\mysql_d:/var/run/mysqld
+
+  app:
+    build: .
+    command: python app.py
+    ports:
+     - 8080:8000
+    volumes:
+     - D:\vol\mysql_d:/var/run/mysqld   
+    depends_on:
+      - db
+```
+
+
+
+
+
 ## Docker  Integration 
 
 1. Build Image 
